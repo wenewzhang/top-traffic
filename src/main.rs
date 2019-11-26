@@ -23,15 +23,20 @@ pub fn rollup(args: &[String]) -> Result<(), Box<dyn Error>> {
     let contents = fs::read_to_string(args[1].clone())?;
     let mut traffics = HashMap::new();
     let mut flag = false;
+    let mut last_size = String::from("");
     for line in contents.lines() {
         // let tmp = line.split(" ");
         let tmp:Vec<&str>= line.split(" ").collect();
         if !flag {
             if tmp[0] == "1" || tmp[0] == "2" || tmp[0] == "3" {
                 println!("{} {} max:{}", tmp[1],tmp[2],tmp[3]);
+                last_size = String::from(tmp[3]);
                 flag = true;
             }
-        } else { flag = false; println!("{} max2:{}", tmp[0],tmp[2]);}
+        } else {
+            flag = false;
+            println!("{} max2:{} {}", tmp[0],tmp[2],last_size);
+        }
     }
 
     traffics.insert(String::from("Blue"), 10);

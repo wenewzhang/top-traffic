@@ -1,5 +1,3 @@
-extern crate bytesize;
-use bytesize::ByteSize;
 use std::env;
 use std::fs;
 use std::error::Error;
@@ -30,14 +28,14 @@ pub fn rollup(args: &[String]) -> Result<(), Box<dyn Error>> {
         // let tmp = line.split(" ");
         let tmp:Vec<&str>= line.split(" ").collect();
         if !flag {
-            if tmp[0] == "1" || tmp[0] == "2" || tmp[0] == "3" {
-                println!("{} {} max:{}", tmp[1],tmp[2],tmp[3]);
+            if tmp[0] == "1" || tmp[0] == "2" || tmp[0] == "3" || tmp[0] == "4" || tmp[0] == "5" || tmp[0] == "6" ||
+            tmp[0] == "7" || tmp[0] == "8" || tmp[0] == "9" {
+                // println!("Step1: {} {} max:{}", tmp[1],tmp[2],tmp[3]);
                 last_size = String::from(tmp[3]);
                 flag = true;
             }
         } else {
             flag = false;
-            println!("{} max2:{} {} Len:{}", tmp[0],tmp[2],last_size,last_size.len());
             //18.3KB -> KB
             let unitlz = &last_size.to_string()[last_size.len()-2..last_size.len()];
             //18.3KB -> 18.3
@@ -60,14 +58,19 @@ pub fn rollup(args: &[String]) -> Result<(), Box<dyn Error>> {
                 let cnumtmp = numtmp.parse::<f64>().unwrap();
                 fnum = fnum + cnumtmp;
             }
-            println!("{}-{}",fnum,unitlz);
-            println!("{}-{}",unitmp,numtmp);
-
+            // traffics.get_mut(tmp[0]).unwrap() += fnum;
+            // if tmp[0] == "113.246.184.221" {
+                // println!("{} max2:{} {} Len:{}", tmp[0],tmp[2],last_size,last_size.len());
+                let old = traffics.entry(tmp[0]).or_insert(0.0);
+                *old += fnum;
+                // println!("{}-{}",fnum,unitlz);
+                // println!("{}-{}",unitmp,numtmp);
+            // }
         }
     }
 
-    traffics.insert(String::from("Blue"), 10);
-    traffics.insert(String::from("Yellow"), 50);
+    // traffics.insert(String::from("Blue"), 10);
+    // traffics.insert(String::from("Yellow"), 50);
 
     for (key, value) in &traffics {
         println!("{}: {}", key, value);

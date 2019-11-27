@@ -40,32 +40,15 @@ pub fn rollup(args: &[String]) -> Result<(), Box<dyn Error>> {
             let unitlz = &last_size.to_string()[last_size.len()-2..last_size.len()];
             //18.3KB -> 18.3
             let numlz = &last_size.to_string()[0..last_size.len()-2];
-            let mut fnum = 0.0;
-            if unitlz == "MB" {
-                let cnumlz = numlz.parse::<f64>().unwrap();
-                fnum = fnum + cnumlz*1024.0;
-            } else if unitlz == "KB" {
-                let cnumlz = numlz.parse::<f64>().unwrap();
-                fnum = fnum + cnumlz;
-            }
+            let mut fnum = calculate(unitlz,numlz);
             let unitmp = &tmp[2].to_string()[tmp[2].len()-2..tmp[2].len()];
             let numtmp = &tmp[2].to_string()[0..tmp[2].len()-2];
-
-            if unitmp == "MB" {
-                let cnumtmp = numtmp.parse::<f64>().unwrap();
-                fnum = fnum + cnumtmp*1024.0;
-            } else if unitmp == "KB" {
-                let cnumtmp = numtmp.parse::<f64>().unwrap();
-                fnum = fnum + cnumtmp;
-            }
-            let old = traffics.entry(tmp[0]).or_insert(0.0);
-            *old += fnum;
+            fnum = fnum + calculate(unitmp,numtmp);
+            let old_num = traffics.entry(tmp[0]).or_insert(0.0);
+            *old_num += fnum;
         }
     }
-
-    for (key, value) in &traffics {
-        println!("{}: {}", key, value);
-    }
+// sort
     let mut traffics_vec: Vec<_> = traffics.iter().collect();
     traffics_vec.sort_by(|&(_, a), &(_, b)| a.partial_cmp(b).unwrap());
     for tv in traffics_vec.iter() {
@@ -74,4 +57,13 @@ pub fn rollup(args: &[String]) -> Result<(), Box<dyn Error>> {
     Ok(())
 }
 
-// fn calculate(unit:&str, num:&str)
+fn calculate(unit:&str, num:&str) -> f64 {
+    let mut cnum = 0.0;
+    if unit == "MB" {
+        cnum = num.parse::<f64>().unwrap();
+        cnum *= 1024.0;
+    } else if unit == "KB" {
+        cnum = num.parse::<f64>().unwrap();
+    }
+    cnum
+}

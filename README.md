@@ -1,6 +1,6 @@
 https://github.com/wenewzhang/top-traffic.git
 ```
-cat /var/log/traffic.log |awk '{ print $1,$6,$7 }'
+cat traffic.log |awk '{ print $1,$2,$6,$7 }' > traffic-reduce.log
 ```
 
 capture the traffic every 3 minutes:

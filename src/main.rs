@@ -2,7 +2,7 @@ use std::env;
 use std::fs;
 use std::error::Error;
 use std::process;
-use std::collections::HashMap;
+use std::collections::BTreeMap;
 
 fn main() {
     // let contents = rollup(args[1])?;
@@ -21,7 +21,7 @@ fn main() {
 
 pub fn rollup(args: &[String]) -> Result<(), Box<dyn Error>> {
     let contents = fs::read_to_string(args[1].clone())?;
-    let mut traffics = HashMap::new();
+    let mut traffics = BTreeMap::new();
     let mut flag = false;
     let mut last_size = String::from("");
     for line in contents.lines() {
@@ -58,22 +58,18 @@ pub fn rollup(args: &[String]) -> Result<(), Box<dyn Error>> {
                 let cnumtmp = numtmp.parse::<f64>().unwrap();
                 fnum = fnum + cnumtmp;
             }
-            // traffics.get_mut(tmp[0]).unwrap() += fnum;
-            // if tmp[0] == "113.246.184.221" {
-                // println!("{} max2:{} {} Len:{}", tmp[0],tmp[2],last_size,last_size.len());
-                let old = traffics.entry(tmp[0]).or_insert(0.0);
-                *old += fnum;
-                // println!("{}-{}",fnum,unitlz);
-                // println!("{}-{}",unitmp,numtmp);
-            // }
+            let old = traffics.entry(tmp[0]).or_insert(0.0);
+            *old += fnum;
         }
     }
 
-    // traffics.insert(String::from("Blue"), 10);
-    // traffics.insert(String::from("Yellow"), 50);
-
     for (key, value) in &traffics {
         println!("{}: {}", key, value);
+    }
+    let mut traffics_vec: Vec<_> = traffics.iter().collect();
+    traffics_vec.sort_by(|&(_, a), &(_, b)| a.partial_cmp(b).unwrap());
+    for tv in traffics_vec.iter() {
+        println!("{:?}",tv);
     }
     Ok(())
 }

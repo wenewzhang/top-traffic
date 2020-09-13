@@ -36,11 +36,15 @@ pub fn rollup(args: &[String]) -> Result<(), Box<dyn Error>> {
             }
         } else {
             flag = false;
+            // println!("Step:{}",last_size);
+            let mut fnum = 0.0;
             //18.3KB -> KB
-            let unitlz = &last_size.to_string()[last_size.len()-2..last_size.len()];
-            //18.3KB -> 18.3
-            let numlz = &last_size.to_string()[0..last_size.len()-2];
-            let mut fnum = calculate(unitlz,numlz);
+            if last_size.len() > 2 {
+                let unitlz = &last_size.to_string()[last_size.len()-2..last_size.len()];
+                //18.3KB -> 18.3
+                let numlz = &last_size.to_string()[0..last_size.len()-2];
+                fnum = fnum + calculate(unitlz,numlz);
+            }
             let unitmp = &tmp[2].to_string()[tmp[2].len()-2..tmp[2].len()];
             let numtmp = &tmp[2].to_string()[0..tmp[2].len()-2];
             fnum = fnum + calculate(unitmp,numtmp);
